@@ -1,0 +1,17 @@
+<!--script type="text/javascript">
+  const data =
+</script-->
+<script type="text/javascript" src="/timetable/script.js"></script>
+
+<div style="margin: 0px;">
+  {{#each timetable.timetableItems}}
+  <div style="margin-top: 5px; background: #EEEEEE">
+    <h4>{{this.date}}: {{this.subject}}</h4>
+    <div class="">
+      Starter: {{this.startTime}}<br>
+      Rom: {{this.locations.[0]}}<br>
+      Lærer: {{this.teacherName}}
+    </div>
+  </div>
+  {{/each}}
+</div>
