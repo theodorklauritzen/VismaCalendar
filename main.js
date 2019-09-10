@@ -83,9 +83,10 @@ function getTimetable(login_name, password, learnerID, callback) {
         //page.render("example.png")
         (async function() {
           let res = await page.evaluate(function() {
-            return (document.title === "Log in with Feide")
+            return document.title
           })
-          if(res) {
+          console.log(res)
+          if(res === "Log in with Feide" || res === "Logg inn med Feide") {
             console.log("FAILED to log in")
             await instance.exit()
             callback(null, "Failed to login")
@@ -105,6 +106,7 @@ function getTimetable(login_name, password, learnerID, callback) {
 
           if(content.slice(0, 12) == "<!--ERROR-->") {
             console.error("FAILED to get timetable")
+            callback(null, "ERROR")
           } else {
             content = content.slice(84, content.length - 20)
             callback(JSON.parse(content), null)
@@ -123,7 +125,9 @@ app.get('/', (req, res) => {
 
 app.get("/login", (req, res) => {
   let data = {}
+  if (req.query.error == 401) data.errorMsg = "Feil brukernavn eller passord"
   if (req.query.error == 403) data.errorMsg = "Dette brukernavnet har ikke tillatelse til å bruke denne nettsida!"
+  if (req.query.error == 500) data.errorMsg = "Ukjent serverfeil, vennlig prøv igjen eller rapporter problemet"
   res.render("login", data)
 })
 
@@ -135,11 +139,17 @@ const learnerMap = {
 app.post("/timetable", (req, res) => {
   if (learnerMap[req.body.login_name]) {
     getTimetable(req.body.login_name, req.body.password, learnerMap[req.body.login_name], (timetable, err) => {
-      //console.log(timetable.timetableItems)
-      //res.send(timetable)
-      res.render("timetable", {
-        timetable: timetable
-      })
+      if(err == "ERROR") {
+        res.redirect("/login?error=500")
+      } else if(err == "Failed to login") {
+        res.redirect("/login?error=401")
+      } else {
+        //console.log(timetable.timetableItems)
+        //res.send(timetable)
+        res.render("timetable", {
+          timetable: timetable
+        })
+      }
     })
   } else {
     res.redirect("/login?error=403")
