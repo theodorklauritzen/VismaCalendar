@@ -122,7 +122,9 @@ app.get('/', (req, res) => {
 })
 
 app.get("/login", (req, res) => {
-  res.render("login")
+  let data = {}
+  if (req.query.error == 403) data.errorMsg = "Dette brukernavnet har ikke tillatelse til å bruke denne nettsida!"
+  res.render("login", data)
 })
 
 const learnerMap = {
@@ -131,13 +133,17 @@ const learnerMap = {
 }
 
 app.post("/timetable", (req, res) => {
-  getTimetable(req.body.login_name, req.body.password, learnerMap[req.body.login_name], (timetable, err) => {
-    //console.log(timetable.timetableItems)
-    //res.send(timetable)
-    res.render("timetable", {
-      timetable: timetable
+  if (learnerMap[req.body.login_name]) {
+    getTimetable(req.body.login_name, req.body.password, learnerMap[req.body.login_name], (timetable, err) => {
+      //console.log(timetable.timetableItems)
+      //res.send(timetable)
+      res.render("timetable", {
+        timetable: timetable
+      })
     })
-  })
+  } else {
+    res.redirect("/login?error=403")
+  }
 })
 
 app.use(express.static('public'))

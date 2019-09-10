@@ -1,20 +1,26 @@
-<style media="screen">
-  .formBox {
-    width: 100%;
-    align-items: center;
-  }
-  .inputBox {
-    width: 100%;
-  }
-  .submitBtn {
-    width: 100%;
-  }
-</style>
-
-<div class="formBox">
+<!--div class="formBox">
   <form action="/timetable" method="post">
     <input type="text" name="login_name" placeholder="Feide bruekrnavn" class="inputBox"><br>
     <input type="password" name="password" placeholder="Feide passord" class="inputBox"><br>
     <input class="submitBtn" type="submit" value="Logg inn">
+  </form>
+</div-->
+
+<div class="text-center">
+  <div style="padding-top: 30px; padding-bottom: 30px">
+    {{#if errorMsg}}
+    <div class="alert alert-danger">
+      {{errorMsg}}
+    </div>
+    {{/if}}
+  </div>
+
+  <form class="form-signin" action="/timetable" method="post">
+    <h1 class="h3 mb-3 font-weight-normal">Log inn</h1>
+    <label for="username" class="sr-only">Feide brukernavn</label>
+    <input type="text" id="username" class="form-control" placeholder="Feide brukernavn" required="" autofocus="">
+    <label for="inputPassword" class="sr-only">Feide passord</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="Feide passord" required="">
+    <button class="btn btn-md btn-primary btn-block" type="submit">Log inn</button>
   </form>
 </div>
