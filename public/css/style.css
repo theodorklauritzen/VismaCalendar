@@ -2,9 +2,21 @@ html {
   position: relative;
   min-height: 100%;
 }
+
 body {
-  margin-bottom: 60px; /* Margin bottom by footer height */
+  margin-bottom: 80px; /* Margin bottom by footer height */
 }
+
+.container {
+  max-width: 600px;
+}
+
+.page-header {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
 .footer {
   position: absolute;
   bottom: 0;

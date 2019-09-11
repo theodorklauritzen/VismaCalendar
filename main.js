@@ -123,6 +123,14 @@ app.get('/', (req, res) => {
   res.redirect("/login")
 })
 
+app.get("/about", (req, res) => {
+  res.render("about")
+})
+
+app.get("/join", (req, res) => {
+  res.render("join")
+})
+
 app.get("/login", (req, res) => {
   let data = {}
   if (req.query.error == 401) data.errorMsg = "Feil brukernavn eller passord"
@@ -159,7 +167,7 @@ app.post("/timetable", (req, res) => {
 app.use(express.static('public'))
 
 app.use((req, res) => {
-  res.redirect("/")
+  res.render("404")
 })
 
 app.listen(process.env.PORT, () => console.log(`Listening on: ${process.env.PORT}`))
