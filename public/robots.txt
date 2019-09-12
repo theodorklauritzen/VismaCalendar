@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+SITEMAP: https://visma-calendar.herokuapp.com/sitemap.xml

@@ -167,7 +167,7 @@ app.post("/timetable", (req, res) => {
 app.use(express.static('public'))
 
 app.use((req, res) => {
-  res.render("404")
+  res.status(404).render("404")
 })
 
 app.listen(process.env.PORT, () => console.log(`Listening on: ${process.env.PORT}`))
