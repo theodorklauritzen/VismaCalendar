@@ -141,7 +141,8 @@ app.get("/login", (req, res) => {
 
 const learnerMap = {
   "lath2401": 7048632,
-  "geha1002": 7048319
+  "geha1002": 7048319,
+  "osjo1703": 7048483
 }
 
 app.post("/timetable", (req, res) => {
