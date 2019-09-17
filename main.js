@@ -147,8 +147,9 @@ const learnerMap = {
 }
 
 app.post("/timetable", (req, res) => {
-  if (learnerMap[req.body.login_name]) {
-    getTimetable(req.body.login_name, req.body.password, learnerMap[req.body.login_name], (timetable, err) => {
+  const loginName = req.body.login_name.toLowerCase()
+  if (learnerMap[loginName]) {
+    getTimetable(loginName, req.body.password, learnerMap[loginName], (timetable, err) => {
       if(err == "ERROR") {
         res.redirect("/login?error=500")
       } else if(err == "Failed to login") {
