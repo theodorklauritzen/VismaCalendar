@@ -1,0 +1,24 @@
+.dayHeading {
+  color: #000;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+button:hover.dayHeading {
+  color: #000;
+  text-decoration: none;
+}
+
+button:focus.dayHeading {
+  text-decoration: none;
+}
+
+.lesson {
+  margin: 5px;
+  background-color: #EEEEEE
+}
+
+.cardBody {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}

@@ -1,9 +1,10 @@
-<!--script type="text/javascript">
-  const data = 
-</script-->
+<script type="text/javascript">
+  const timetableString = '{{{timetable}}}';
+</script>
+<link rel="stylesheet" href="/css/timetable/style.css">
 <script type="text/javascript" src="/js/timetable/script.js"></script>
 
-<div style="margin: 0px;">
+<!--div style="margin: 0px;">
   {{#each timetable.timetableItems}}
   <div style="margin-top: 5px; background: #EEEEEE">
     <h6><strong>{{this.date}}: {{this.subject}}</strong></h6>
@@ -14,4 +15,6 @@
     </div>
   </div>
   {{/each}}
-</div>
+</div-->
+
+<div class="accordion" style="margin: 0px" id="timetable"></div>

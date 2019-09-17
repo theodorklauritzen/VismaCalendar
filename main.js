@@ -158,7 +158,7 @@ app.post("/timetable", (req, res) => {
         //console.log(timetable.timetableItems)
         //res.send(timetable)
         res.render("timetable", {
-          timetable: timetable
+          timetable: JSON.stringify(timetable)
         })
       }
     })
