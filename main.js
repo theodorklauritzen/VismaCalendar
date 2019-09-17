@@ -147,7 +147,10 @@ const learnerMap = {
   "akli1204": 7048368,
   "roru0406": 7048199,
   "bisi2812": 7048729,
-  "thkr2212": 7048608
+  "thkr2212": 7048608,
+  "huma1608": 7048473,
+  "gitu1710": 7048494,
+  "imma0402": 7048192
 }
 
 app.post("/timetable", (req, res) => {
