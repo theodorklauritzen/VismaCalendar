@@ -71,13 +71,6 @@ window.onload = () => {
     rootTimetable.appendChild(createDOM(i, dateOfDay(i)))
   })
 
-  // Show current day
-  document.getElementById(`${showDay}Collapse`).classList.add("show")
-  document.getElementById(showDay).scrollIntoView()
-  /*if (window.location.href.split("#").length === 1) {
-    window.location.href = window.location.href + "#" + showDay
-  }*/
-
   function getDay(date) {
     let dateSplit = date.split("/")
     let lessonDay = new Date(`${dateSplit[1]}/${dateSplit[0]}/${dateSplit[2]}`)
@@ -105,4 +98,8 @@ window.onload = () => {
     let parentNode = document.getElementById(`${day}Collapse`).firstChild
     parentNode.appendChild(generateLesson(i))
   })
+
+  // Show current day
+  document.getElementById(`${showDay}Collapse`).classList.add("show")
+  document.getElementById(showDay).scrollIntoView()
 }
