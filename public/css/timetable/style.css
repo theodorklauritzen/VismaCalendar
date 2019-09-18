@@ -1,7 +1,15 @@
+.timetable-container {
+  margin: 15px 0px 15px 0px
+}
+
 .dayHeading {
   color: #000;
   text-decoration: none;
   font-size: 20px;
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  vertical-align: middle;
 }
 
 button:hover.dayHeading {
