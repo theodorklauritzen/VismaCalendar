@@ -73,6 +73,7 @@ window.onload = () => {
 
   // Show current day
   document.getElementById(`${showDay}Collapse`).classList.add("show")
+  document.getElementById(showDay).scrollIntoView()
   /*if (window.location.href.split("#").length === 1) {
     window.location.href = window.location.href + "#" + showDay
   }*/
