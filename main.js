@@ -104,7 +104,7 @@ function getTimetable(login_name, password, learnerID, callback) {
           let content = await page.property('content');
           await instance.exit()
 
-          if(status != 200) {
+          if(status != "success") {
             console.error("FAILED to get timetable")
             callback(null, "ERROR")
           } else {
