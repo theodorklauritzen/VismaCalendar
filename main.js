@@ -1,18 +1,33 @@
+// Fetch alle the envoierment variables
 require('dotenv').config()
 const phantom = require('phantom');
 
+// Express
 const express = require('express')
 const app = express()
 
+// Handlebars
 const exphbs = require('express-handlebars');
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 
+// Bodyparser
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
   extended: false
 }));
 
+// Firebase
+const admin = require("firebase-admin");
+
+const serviceAccount = require("./serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: process.env.FIREBASE_URL
+});
+
+// Finds the nearest Monday
 function nearestMonday() {
   let today = new Date()
   let dayofWeek = today.getDay()
@@ -29,6 +44,7 @@ function nearestMonday() {
   return dd + "/" + mm + "/" + yyyy
 }
 
+// sets up a headless browser to fetch the timetable
 function getTimetable(login_name, password, learnerID, callback) {
   const FEIDE_LOGIN_PAGE = "https://valler-vgs.inschool.visma.no/Login.jsp?saml_idp=feide";
   const VISMA_TIMETABLE = `https://valler-vgs.inschool.visma.no/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=` + nearestMonday();
