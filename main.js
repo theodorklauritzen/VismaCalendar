@@ -167,6 +167,8 @@ const learnerMap = {
   "mojo0608": 7048247
 }
 
+// test
+
 app.post("/timetable", (req, res) => {
   const loginName = req.body.login_name.toLowerCase()
   if (learnerMap[loginName]) {
