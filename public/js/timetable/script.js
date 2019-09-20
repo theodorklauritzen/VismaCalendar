@@ -86,7 +86,10 @@ window.onload = () => {
     ret.appendChild(subjectHeading)
 
     let body = document.createElement("div")
-    body.innerHTML = `Starter: ${lesson.startTime}<br>Rom: ${lesson.locations[0]}<br>Lærer: ${lesson.teacherName}`
+    let st = lesson.startTime ? lesson.startTime : "Ikke satt"
+    let loc = lesson.locations ? lesson.locations[0] : "Ikke satt"
+    let tn = lesson.teacherName ? lesson.teacherName : "Ikke satt"
+    body.innerHTML = `Starter: ${st}<br>Rom: ${loc}<br>Lærer: ${tn}`
     ret.appendChild(body)
 
     return ret
