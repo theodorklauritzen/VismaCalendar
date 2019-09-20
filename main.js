@@ -100,11 +100,11 @@ function getTimetable(login_name, password, learnerID, callback) {
 
       if(finishedLoading == 3) {
         (async function() {
-          await page.open(VISMA_TIMETABLE)
+          let status = await page.open(VISMA_TIMETABLE)
           let content = await page.property('content');
           await instance.exit()
 
-          if(content.slice(0, 12) == "<!--ERROR-->") {
+          if(status != 200) {
             console.error("FAILED to get timetable")
             callback(null, "ERROR")
           } else {
@@ -135,7 +135,7 @@ app.get("/login", (req, res) => {
   let data = {}
   if (req.query.error == 401) data.errorMsg = "Feil brukernavn eller passord"
   if (req.query.error == 403) data.errorMsg = "Dette brukernavnet har ikke tillatelse til å bruke denne nettsida!"
-  if (req.query.error == 500) data.errorMsg = "Ukjent serverfeil, vennlig prøv igjen eller rapporter problemet"
+  if (req.query.error == 500) data.errorMsg = "Vi kan dessverre ikke hente timeplanen din, grunnet en ukjent serverfeil hos Visma.  Nettsiden funker så snart Visma retter den."
   res.render("login", data)
 })
 
