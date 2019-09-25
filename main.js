@@ -29,15 +29,33 @@ function nearestMonday() {
   return dd + "/" + mm + "/" + yyyy
 }
 
-function getTimetable(login_name, password, learnerID, callback) {
+function getTimetable(login_name, password, callback) {
   const FEIDE_LOGIN_PAGE = "https://valler-vgs.inschool.visma.no/Login.jsp?saml_idp=feide";
-  const VISMA_TIMETABLE = `https://valler-vgs.inschool.visma.no/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=` + nearestMonday();
+  //const VISMA_TIMETABLE = `https://valler-vgs.inschool.visma.no/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=` + nearestMonday();
+  const VISMA_TIMETABLE_1 = "https://valler-vgs.inschool.visma.no/control/timetablev2/learner/"
+  const VISMA_TIMETABLE_2 = "/fetch/ALL/0/current?forWeek=" + nearestMonday();
+  const VISMA_LEARNERID = "https://valler-vgs.inschool.visma.no/control/permissions/user/";
 
   (async function () {
     const instance = await phantom.create();
     const page = await instance.createPage();
 
     let finishedLoading = 0
+    let userPermissions = {}
+
+    async function getTimetableJSON() {
+      let status = await page.open(VISMA_TIMETABLE_1 + userPermissions.learnerId + VISMA_TIMETABLE_2)
+      let content = await page.property('content');
+      await instance.exit()
+
+      if(status != "success") {
+        console.error("FAILED to get timetable")
+        callback(null, "ERROR")
+      } else {
+        content = content.slice(84, content.length - 20)
+        callback(JSON.parse(content), null)
+      }
+    }
 
     await page.on('onUrlChanged', url => {
       switch (finishedLoading) {
@@ -48,6 +66,9 @@ function getTimetable(login_name, password, learnerID, callback) {
           console.log("Loading Visma");
           break;
         case 2:
+          console.log("Loading VisId")
+          break;
+        case 3:
           console.log("Loading Timetable");
           break;
       }
@@ -86,16 +107,17 @@ function getTimetable(login_name, password, learnerID, callback) {
 
       if(finishedLoading == 3) {
         (async function() {
-          let status = await page.open(VISMA_TIMETABLE)
+          let status = await page.open(VISMA_LEARNERID)
           let content = await page.property('content');
-          await instance.exit()
 
           if(status != "success") {
             console.error("FAILED to get timetable")
             callback(null, "ERROR")
+            await instance.exit()
           } else {
             content = content.slice(84, content.length - 20)
-            callback(JSON.parse(content), null)
+            userPermissions = JSON.parse(content)
+            getTimetableJSON()
           }
         })();
       }
@@ -120,58 +142,25 @@ app.get("/join", (req, res) => {
 app.get("/login", (req, res) => {
   let data = {}
   if (req.query.error == 401) data.errorMsg = "Feil brukernavn eller passord"
-  if (req.query.error == 403) data.errorMsg = "Dette brukernavnet har ikke tillatelse til å bruke denne nettsida!"
   if (req.query.error == 500) data.errorMsg = "Vi kan dessverre ikke hente timeplanen din, grunnet en ukjent serverfeil hos Visma.  Nettsiden funker så snart Visma retter den."
   res.render("login", data)
 })
 
-const learnerMap = {
-  "lath2401": 7048632,
-  "alga1010": 7048336,
-  "geha1002": 7048319,
-  "osjo1703": 7048483,
-  "huse2607": 7048669,
-  "akli1204": 7048368,
-  "roru0406": 7048199,
-  "bisi2812": 7048729,
-  "thkr2212": 7048608,
-  "huma1608": 7048473,
-  "gitu1710": 7048494,
-  "imma0402": 7048192,
-  "rova2209": 7048594,
-  "moca2907": 7048740,
-  "toma2412": 7048649,
-  "heel3107": 7048778,
-  "sema0709": 7048272,
-  "edka1001": 7048317,
-  "eiso1712": 7048496,
-  "peir0210": 7048168,
-  "cial0204": 7048154,
-  "hain18081": 7048511,
-  "phgi2607": 7048670,
-  "gala1501": 7048428,
-  "mojo0608": 7048247
-}
-
 app.post("/timetable", (req, res) => {
   const loginName = req.body.login_name.toLowerCase()
-  if (learnerMap[loginName]) {
-    getTimetable(loginName, req.body.password, learnerMap[loginName], (timetable, err) => {
-      if(err == "ERROR") {
-        res.redirect("/login?error=500")
-      } else if(err == "Failed to login") {
-        res.redirect("/login?error=401")
-      } else {
-        //console.log(timetable.timetableItems)
-        //res.send(timetable)
-        res.render("timetable", {
-          timetable: JSON.stringify(timetable)
-        })
-      }
-    })
-  } else {
-    res.redirect("/login?error=403")
-  }
+  getTimetable(loginName, req.body.password, (timetable, err) => {
+    if(err == "ERROR") {
+      res.redirect("/login?error=500")
+    } else if(err == "Failed to login") {
+      res.redirect("/login?error=401")
+    } else {
+      //console.log(timetable.timetableItems)
+      //res.send(timetable)
+      res.render("timetable", {
+        timetable: JSON.stringify(timetable)
+      })
+    }
+  })
 })
 
 app.use(express.static('public'))
