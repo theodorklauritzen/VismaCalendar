@@ -59,23 +59,9 @@ function getTimetable(login_name, password, learnerID, callback) {
 
       if(finishedLoading == 1) {
         page.evaluate(function(username, password) {
-          function click(el) {
-            var ev = document.createEvent("MouseEvent");
-            ev.initMouseEvent(
-              "click",
-              true /* bubble */, true /* cancelable */,
-              window, null,
-              0, 0, 0, 0, /* coordinates */
-              false, false, false, false, /* modifier keys */
-              0 /*left*/, null
-            );
-            el.dispatchEvent(ev);
-          }
-
           document.getElementById("username").value = username
           document.getElementById("password").value = password
-          submitBtn = document.getElementsByClassName("main")[0].getElementsByTagName("button")[0]
-          click(submitBtn)
+          document.getElementsByName("f")[0].submit();
         }, login_name, password)
       }
 
