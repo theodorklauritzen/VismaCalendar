@@ -135,8 +135,8 @@ app.get("/about", (req, res) => {
   res.render("about")
 })
 
-app.get("/join", (req, res) => {
-  res.render("join")
+app.get("/terms", (req, res) => {
+  res.render("terms")
 })
 
 app.get("/login", (req, res) => {
