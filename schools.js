@@ -8,7 +8,7 @@ module.exports = [
     name: "asker",
     displayName: "Asker",
     link: "asker-vgs"
-  }
+  },
   {
     name: "rosenvilde",
     displayName: "Rosenvilde",
