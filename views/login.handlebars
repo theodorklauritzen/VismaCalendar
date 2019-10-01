@@ -1,3 +1,4 @@
+<script type="text/javascript" src="/js/login/script.js"></script>
 <link rel="stylesheet" href="/css/login/style.css">
 
 <div class="text-center">
@@ -13,7 +14,7 @@
     <h1 class="page-header">Logg inn</h1>
 
     <label for="school" class="sr-only">Skole</label>
-    <select class="form-control" name="school" required="">
+    <select id="school" class="form-control" name="school" required="">
       {{#each schools}}
         <option value="{{name}}">{{displayName}}</option>
       {{/each}}
