@@ -1,0 +1,15 @@
+<link rel="stylesheet" href="/css/login/style.css">
+
+<div class="text-center">
+  <div class="space">
+
+  </div>
+
+  <h1 class="page-header">Velg skole</h1>
+
+  <div class="">
+    {{#each schools}}
+      <a class="btn btn-lg btn-block btn-primary" href="/login/{{name}}">{{displayName}}</a>
+    {{/each}}
+  </div>
+</div>

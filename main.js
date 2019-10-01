@@ -1,4 +1,7 @@
 require('dotenv').config()
+
+const schools = require('./schools');
+
 const phantom = require('phantom');
 
 const express = require('express')
@@ -140,10 +143,33 @@ app.get("/terms", (req, res) => {
 })
 
 app.get("/login", (req, res) => {
-  let data = {}
-  if (req.query.error == 401) data.errorMsg = "Feil brukernavn eller passord"
-  if (req.query.error == 500) data.errorMsg = "Vi kan dessverre ikke hente timeplanen din, grunnet en ukjent serverfeil hos Visma.  Nettsiden funker så snart Visma retter den."
-  res.render("login", data)
+  res.render("select", {
+    schools: schools
+  })
+})
+
+function getSchool(name) {
+  for (let i = 0; i < schools.length; i++) {
+    if(schools[i].name === name) {
+      return schools[i]
+    }
+  }
+
+  return null
+}
+
+app.get("/login/:school", (req, res) => {
+  const school = getSchool(req.params.school)
+  if (school) {
+    let data = {
+      school: school
+    }
+    if (req.query.error == 401) data.errorMsg = "Feil brukernavn, passord eller skole"
+    if (req.query.error == 500) data.errorMsg = "Vi kan dessverre ikke hente timeplanen din, grunnet en ukjent feil.  Årsaken er antageligvis en endring på nettsida til Visma."
+    res.render("login", data)
+  } else {
+    res.redirect("/login")
+  }
 })
 
 app.post("/timetable", (req, res) => {
