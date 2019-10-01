@@ -142,12 +142,6 @@ app.get("/terms", (req, res) => {
   res.render("terms")
 })
 
-app.get("/login", (req, res) => {
-  res.render("select", {
-    schools: schools
-  })
-})
-
 function getSchool(name) {
   for (let i = 0; i < schools.length; i++) {
     if(schools[i].name === name) {
@@ -158,18 +152,13 @@ function getSchool(name) {
   return null
 }
 
-app.get("/login/:school", (req, res) => {
-  const school = getSchool(req.params.school)
-  if (school) {
-    let data = {
-      school: school
-    }
-    if (req.query.error == 401) data.errorMsg = "Feil brukernavn, passord eller skole"
-    if (req.query.error == 500) data.errorMsg = "Vi kan dessverre ikke hente timeplanen din, grunnet en ukjent feil.  Årsaken er antageligvis en endring på nettsida til Visma."
-    res.render("login", data)
-  } else {
-    res.redirect("/login")
+app.get("/login", (req, res) => {
+  let data = {
+    schools: schools
   }
+  if (req.query.error == 401) data.errorMsg = "Feil brukernavn, passord eller skole"
+  if (req.query.error == 500) data.errorMsg = "Vi kan dessverre ikke hente timeplanen din, grunnet en ukjent feil.  Årsaken er antageligvis en endring på nettsida til Visma."
+  res.render("login", data)
 })
 
 app.post("/timetable", (req, res) => {
@@ -178,9 +167,9 @@ app.post("/timetable", (req, res) => {
   if (school) {
     getTimetable(loginName, req.body.password, school.link, (timetable, err) => {
       if(err == "ERROR") {
-        res.redirect(`/login/${school.name}?error=500`)
+        res.redirect(`/login?error=500`)
       } else if(err == "Failed to login") {
-        res.redirect(`/login/${school.name}?error=401`)
+        res.redirect(`/login?error=401`)
       } else {
         //console.log(timetable.timetableItems)
         //res.send(timetable)
@@ -190,7 +179,7 @@ app.post("/timetable", (req, res) => {
       }
     })
   } else {
-    res.redirect("/login")
+    res.redirect("/login?error=401")
   }
 })
 

@@ -12,16 +12,14 @@
   <form class="form-signin" action="/timetable" method="post">
     <h1 class="page-header">Logg inn</h1>
 
-    <!--label for="school" class="sr-only">Skole</label>
-    <select class="form-control" id="school" required="">
-      <option>Valler</option>
-      <option>Rud</option>
-      <option>Rosenvild</option>
-      <option>Dønski</option>
-      <option>Sandvika</option>
-    </select-->
+    <label for="school" class="sr-only">Skole</label>
+    <select class="form-control" name="school" required="">
+      {{#each schools}}
+        <option value="{{name}}">{{displayName}}</option>
+      {{/each}}
+    </select>
 
-    <input type="hidden" name="school" value="{{school.name}}">
+    <!--input type="hidden" name="school" value="{{school.name}}"-->
 
     <label for="username" class="sr-only">Feide brukernavn</label>
     <input type="text" id="username" name="login_name" class="form-control" placeholder="Feide brukernavn" pattern="[a-zA-Z]{4}[0-9]{4,5}" autocapitalize="off" required="" autofocus="">
