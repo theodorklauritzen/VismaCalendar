@@ -96,7 +96,7 @@ function getTimetable(login_name, password, school, callback) {
             return document.title
           })
           console.log(res)
-          if(res !== "Visma InSchool") {
+          if(res !== "Log in with Feide" || res === "Logg inn med Feide" || res === "Visma InSchool | Innlogging") {
             console.log("FAILED to log in")
             await instance.exit()
             callback(null, "Failed to login")
