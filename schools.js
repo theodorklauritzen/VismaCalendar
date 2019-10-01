@@ -6,5 +6,17 @@ module.exports = [
   {
     name: "rosenvilde",
     displayName: "Rosenvilde"
+  },
+  {
+    name: "rud",
+    displayName: "Rud"
+  },
+  {
+    name: "sandvika",
+    displayName: "Sandvika"
+  },
+  {
+    name: "donski",
+    displayName: "Dønski"
   }
 ]
