@@ -1,12 +1,10 @@
 module.exports = [
   {
     name: "valler",
-    displayName: "Valler",
-    link: "valler"
+    displayName: "Valler"
   },
   {
     name: "rosenvilde",
-    displayName: "Rosenvilde",
-    link: "rosenvilde"
+    displayName: "Rosenvilde"
   }
 ]
