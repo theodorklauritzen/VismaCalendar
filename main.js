@@ -33,11 +33,11 @@ function nearestMonday() {
 }
 
 function getTimetable(login_name, password, school, callback) {
-  const FEIDE_LOGIN_PAGE = `https://${school}-vgs.inschool.visma.no/Login.jsp?saml_idp=feide`;
+  const FEIDE_LOGIN_PAGE = `https://${school}.inschool.visma.no/Login.jsp?saml_idp=feide`;
   //const VISMA_TIMETABLE = `https://valler-vgs.inschool.visma.no/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=` + nearestMonday();
-  const VISMA_TIMETABLE_1 = `https://${school}-vgs.inschool.visma.no/control/timetablev2/learner/`
+  const VISMA_TIMETABLE_1 = `https://${school}.inschool.visma.no/control/timetablev2/learner/`
   const VISMA_TIMETABLE_2 = "/fetch/ALL/0/current?forWeek=" + nearestMonday();
-  const VISMA_LEARNERID = `https://${school}-vgs.inschool.visma.no/control/permissions/user/`;
+  const VISMA_LEARNERID = `https://${school}.inschool.visma.no/control/permissions/user/`;
 
   (async function () {
     const instance = await phantom.create();
@@ -175,19 +175,23 @@ app.get("/login/:school", (req, res) => {
 app.post("/timetable", (req, res) => {
   const loginName = req.body.login_name.toLowerCase()
   const school = getSchool(req.body.school)
-  getTimetable(loginName, req.body.password, school.name, (timetable, err) => {
-    if(err == "ERROR") {
-      res.redirect(`/login/${school.name}?error=500`)
-    } else if(err == "Failed to login") {
-      res.redirect(`/login/${school.name}?error=401`)
-    } else {
-      //console.log(timetable.timetableItems)
-      //res.send(timetable)
-      res.render("timetable", {
-        timetable: JSON.stringify(timetable)
-      })
-    }
-  })
+  if (school) {
+    getTimetable(loginName, req.body.password, school.link, (timetable, err) => {
+      if(err == "ERROR") {
+        res.redirect(`/login/${school.name}?error=500`)
+      } else if(err == "Failed to login") {
+        res.redirect(`/login/${school.name}?error=401`)
+      } else {
+        //console.log(timetable.timetableItems)
+        //res.send(timetable)
+        res.render("timetable", {
+          timetable: JSON.stringify(timetable)
+        })
+      }
+    })
+  } else {
+    res.redirect("/login")
+  }
 })
 
 app.use(express.static('public'))

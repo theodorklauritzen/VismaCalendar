@@ -1,22 +1,37 @@
 module.exports = [
   {
     name: "valler",
-    displayName: "Valler"
+    displayName: "Valler",
+    link: "valler-vgs"
   },
   {
+    name: "asker",
+    displayName: "Asker",
+    link: "asker-vgs"
+  }
+  {
     name: "rosenvilde",
-    displayName: "Rosenvilde"
+    displayName: "Rosenvilde",
+    link: "rosenvild-vgs"
   },
   {
     name: "rud",
-    displayName: "Rud"
+    displayName: "Rud",
+    link: "rud-vgs"
   },
   {
     name: "sandvika",
-    displayName: "Sandvika"
+    displayName: "Sandvika",
+    link: "sandvika-vgs"
   },
   {
     name: "donski",
-    displayName: "Dønski"
+    displayName: "Dønski",
+    link: "donski-vgs"
+  },
+  {
+    name: "mailand",
+    displayName: "Mailand",
+    link: "mailand"
   }
 ]
