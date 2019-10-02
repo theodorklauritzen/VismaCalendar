@@ -32,12 +32,12 @@ function nearestMonday() {
   return dd + "/" + mm + "/" + yyyy
 }
 
-function getTimetable(login_name, password, school, callback) {
-  const FEIDE_LOGIN_PAGE = `https://${school}.inschool.visma.no/Login.jsp?saml_idp=feide`;
+function getTimetable(login_name, password, schoolLink, callback) {
+  const FEIDE_LOGIN_PAGE = `${schoolLink}/Login.jsp?saml_idp=feide`;
   //const VISMA_TIMETABLE = `https://valler-vgs.inschool.visma.no/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=` + nearestMonday();
-  const VISMA_TIMETABLE_1 = `https://${school}.inschool.visma.no/control/timetablev2/learner/`
+  const VISMA_TIMETABLE_1 = `${schoolLink}/control/timetablev2/learner/`
   const VISMA_TIMETABLE_2 = "/fetch/ALL/0/current?forWeek=" + nearestMonday();
-  const VISMA_LEARNERID = `https://${school}.inschool.visma.no/control/permissions/user/`;
+  const VISMA_LEARNERID = `${schoolLink}/control/permissions/user/`;
 
   (async function () {
     const instance = await phantom.create();
