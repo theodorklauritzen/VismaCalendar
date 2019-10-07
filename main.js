@@ -1,4 +1,7 @@
 require('dotenv').config()
+
+const schools = require('./schools');
+
 const phantom = require('phantom');
 
 const express = require('express')
@@ -29,15 +32,33 @@ function nearestMonday() {
   return dd + "/" + mm + "/" + yyyy
 }
 
-function getTimetable(login_name, password, learnerID, callback) {
-  const FEIDE_LOGIN_PAGE = "https://valler-vgs.inschool.visma.no/Login.jsp?saml_idp=feide";
-  const VISMA_TIMETABLE = `https://valler-vgs.inschool.visma.no/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=` + nearestMonday();
+function getTimetable(login_name, password, schoolLink, callback) {
+  const FEIDE_LOGIN_PAGE = `${schoolLink}/Login.jsp?saml_idp=feide`;
+  //const VISMA_TIMETABLE = `https://valler-vgs.inschool.visma.no/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=` + nearestMonday();
+  const VISMA_TIMETABLE_1 = `${schoolLink}/control/timetablev2/learner/`
+  const VISMA_TIMETABLE_2 = "/fetch/ALL/0/current?forWeek=" + nearestMonday();
+  const VISMA_LEARNERID = `${schoolLink}/control/permissions/user/`;
 
   (async function () {
     const instance = await phantom.create();
     const page = await instance.createPage();
 
     let finishedLoading = 0
+    let userPermissions = {}
+
+    async function getTimetableJSON() {
+      let status = await page.open(VISMA_TIMETABLE_1 + userPermissions.learnerId + VISMA_TIMETABLE_2)
+      let content = await page.property('content');
+      await instance.exit()
+
+      if(status != "success") {
+        console.error("FAILED to get timetable")
+        callback(null, "ERROR")
+      } else {
+        content = content.slice(84, content.length - 20)
+        callback(JSON.parse(content), null)
+      }
+    }
 
     await page.on('onUrlChanged', url => {
       switch (finishedLoading) {
@@ -48,6 +69,9 @@ function getTimetable(login_name, password, learnerID, callback) {
           console.log("Loading Visma");
           break;
         case 2:
+          console.log("Loading VisId")
+          break;
+        case 3:
           console.log("Loading Timetable");
           break;
       }
@@ -59,23 +83,9 @@ function getTimetable(login_name, password, learnerID, callback) {
 
       if(finishedLoading == 1) {
         page.evaluate(function(username, password) {
-          function click(el) {
-            var ev = document.createEvent("MouseEvent");
-            ev.initMouseEvent(
-              "click",
-              true /* bubble */, true /* cancelable */,
-              window, null,
-              0, 0, 0, 0, /* coordinates */
-              false, false, false, false, /* modifier keys */
-              0 /*left*/, null
-            );
-            el.dispatchEvent(ev);
-          }
-
           document.getElementById("username").value = username
           document.getElementById("password").value = password
-          submitBtn = document.getElementsByClassName("main")[0].getElementsByTagName("button")[0]
-          click(submitBtn)
+          document.getElementsByName("f")[0].submit();
         }, login_name, password)
       }
 
@@ -86,7 +96,7 @@ function getTimetable(login_name, password, learnerID, callback) {
             return document.title
           })
           console.log(res)
-          if(res === "Log in with Feide" || res === "Logg inn med Feide") {
+          if(res === "Log in with Feide" || res === "Logg inn med Feide" || res === "Visma InSchool | Innlogging") {
             console.log("FAILED to log in")
             await instance.exit()
             callback(null, "Failed to login")
@@ -100,16 +110,17 @@ function getTimetable(login_name, password, learnerID, callback) {
 
       if(finishedLoading == 3) {
         (async function() {
-          await page.open(VISMA_TIMETABLE)
+          let status = await page.open(VISMA_LEARNERID)
           let content = await page.property('content');
-          await instance.exit()
 
-          if(content.slice(0, 12) == "<!--ERROR-->") {
+          if(status != "success") {
             console.error("FAILED to get timetable")
             callback(null, "ERROR")
+            await instance.exit()
           } else {
             content = content.slice(84, content.length - 20)
-            callback(JSON.parse(content), null)
+            userPermissions = JSON.parse(content)
+            getTimetableJSON()
           }
         })();
       }
@@ -127,42 +138,48 @@ app.get("/about", (req, res) => {
   res.render("about")
 })
 
-app.get("/join", (req, res) => {
-  res.render("join")
+app.get("/terms", (req, res) => {
+  res.render("terms")
 })
 
+function getSchool(name) {
+  for (let i = 0; i < schools.length; i++) {
+    if(schools[i].name === name) {
+      return schools[i]
+    }
+  }
+
+  return null
+}
+
 app.get("/login", (req, res) => {
-  let data = {}
-  if (req.query.error == 401) data.errorMsg = "Feil brukernavn eller passord"
-  if (req.query.error == 403) data.errorMsg = "Dette brukernavnet har ikke tillatelse til å bruke denne nettsida!"
-  if (req.query.error == 500) data.errorMsg = "Ukjent serverfeil, vennlig prøv igjen eller rapporter problemet"
+  let data = {
+    schools: schools
+  }
+  if (req.query.error == 401) data.errorMsg = "Feil brukernavn, passord eller skole"
+  if (req.query.error == 500) data.errorMsg = "Vi kan dessverre ikke hente timeplanen din, grunnet en ukjent feil.  Årsaken er antageligvis en endring på nettsida til Visma."
   res.render("login", data)
 })
 
-const learnerMap = {
-  "lath2401": 7048632,
-  "geha1002": 7048319,
-  "osjo1703": 7048483,
-  "huse2607": 7048669
-}
-
 app.post("/timetable", (req, res) => {
-  if (learnerMap[req.body.login_name]) {
-    getTimetable(req.body.login_name, req.body.password, learnerMap[req.body.login_name], (timetable, err) => {
+  const loginName = req.body.login_name.toLowerCase()
+  const school = getSchool(req.body.school)
+  if (school) {
+    getTimetable(loginName, req.body.password, school.link, (timetable, err) => {
       if(err == "ERROR") {
-        res.redirect("/login?error=500")
+        res.redirect(`/login?error=500`)
       } else if(err == "Failed to login") {
-        res.redirect("/login?error=401")
+        res.redirect(`/login?error=401`)
       } else {
         //console.log(timetable.timetableItems)
         //res.send(timetable)
         res.render("timetable", {
-          timetable: timetable
+          timetable: JSON.stringify(timetable)
         })
       }
     })
   } else {
-    res.redirect("/login?error=403")
+    res.redirect("/login?error=401")
   }
 })
 

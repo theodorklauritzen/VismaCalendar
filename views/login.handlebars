@@ -1,5 +1,8 @@
+<script type="text/javascript" src="/js/login/script.js"></script>
+<link rel="stylesheet" href="/css/login/style.css">
+
 <div class="text-center">
-  <div style="padding-top: 30px; padding-bottom: 30px">
+  <div class="space">
     {{#if errorMsg}}
     <div class="alert alert-danger">
       {{errorMsg}}
@@ -9,12 +12,24 @@
 
   <form class="form-signin" action="/timetable" method="post">
     <h1 class="page-header">Logg inn</h1>
+
+    <label for="school" class="sr-only">Skole</label>
+    <select id="school" class="form-control" name="school" required="">
+      {{#each schools}}
+        <option value="{{name}}">{{displayName}}</option>
+      {{/each}}
+    </select>
+
+    <!--input type="hidden" name="school" value="{{school.name}}"-->
+
     <label for="username" class="sr-only">Feide brukernavn</label>
-    <input type="text" id="username" name="login_name" class="form-control" placeholder="Feide brukernavn" required="" autofocus="">
+    <input type="text" id="username" name="login_name" class="form-control" placeholder="Feide brukernavn" pattern="[a-zA-Z]{4}[0-9]{4,5}" autocapitalize="off" required="" autofocus="">
+
     <label for="inputPassword" class="sr-only">Feide passord</label>
     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Feide passord" required="">
+
     <button class="btn btn-md btn-primary btn-block" type="submit">Logg inn</button>
   </form>
   <br>
-  <p class="text-muted">Etter å ha logget inn vil det gå noen sekunder, mens vi henter timplanen din.  Vennligst vær litt tålmodig.</p>
+  <p class="text-muted">Etter å ha logget inn vil det gå noen sekunder, mens vi henter timeplanen din.  Vennligst vær litt tålmodig.</p>
 </div>
