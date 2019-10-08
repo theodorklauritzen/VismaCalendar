@@ -108,7 +108,7 @@ window.onload = () => {
       return parseInt(t[0]) * 60 + parseInt(t[1])
     }
 
-    return minutesEq(sortValueA) < minutesEq(sortValueB) ? 1 : (minutesEq(sortValueA) == minutesEq(sortValueB) ? 0 : -1)
+    return minutesEq(sortValueA) > minutesEq(sortValueB) ? 1 : (minutesEq(sortValueA) == minutesEq(sortValueB) ? 0 : -1)
   })
 
   sortedLessons.forEach(i => {
