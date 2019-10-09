@@ -110,7 +110,7 @@ window.onload = () => {
   })
 
   // TODO: deep copy
-  let showLessons = []
+  /*let showLessons = []
   for (let i = 0; i < lessons.length; i++) {
     if (i < lessons.length - 1) {
       if(lessons[i].endTime === lessons[i + 1].startTime && lessons[i].teachingGroupId === lessons[i + 1].teachingGroupId) {
@@ -124,9 +124,9 @@ window.onload = () => {
     } else {
       showLessons.push(lessons[i])
     }
-  }
+  }*/
 
-  showLessons.forEach(i => {
+  lessons.forEach(i => {
     let day = getDay(i.date)
 
     let parentNode = document.getElementById(`${day}Collapse`).firstChild
