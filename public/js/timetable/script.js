@@ -87,9 +87,10 @@ window.onload = () => {
 
     let body = document.createElement("div")
     let st = lesson.startTime ? lesson.startTime : "Ikke satt"
+    let et = lesson.endTime ? lesson.endTime : "Ikke satt"
     let loc = lesson.locations ? lesson.locations[0] : "Ikke satt"
     let tn = lesson.teacherName ? lesson.teacherName : "Ikke satt"
-    body.innerHTML = `Starter: ${st}<br>Rom: ${loc}<br>Lærer: ${tn}`
+    body.innerHTML = `Tid: ${st} - ${et}<br>Rom: ${loc}<br>Lærer: ${tn}`
     ret.appendChild(body)
 
     return ret
