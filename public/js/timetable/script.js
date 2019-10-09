@@ -95,23 +95,20 @@ window.onload = () => {
     return ret
   }
 
-  let sortedLessons = timetable.timetableItems
+  let lessons = timetable.timetableItems
 
-  sortedLessons.sort((a, b) => {
-    // No nedd to sort date, the time is the only important part
-
-    let sortValueA = a.startTime;
-    let sortValueB = b.startTime;
-
-    function minutesEq(t) {
-      t = t.split(":")
-      return parseInt(t[0]) * 60 + parseInt(t[1])
+  // Sort lessons after startTime and date
+  lessons.sort((a, b) => {
+    function datetimeEq(e) {
+      let d = e.date.split("/")
+      let t = e.startTime.split(":")
+      return parseInt(d[2]) * 10000 * 24 * 60 + parseInt(d[1]) * 100 * 24 * 60 + parseInt(d[0]) * 24 * 60 + parseInt(t[0]) * 60 + parseInt(t[1])
     }
 
-    return minutesEq(sortValueA) > minutesEq(sortValueB) ? 1 : (minutesEq(sortValueA) == minutesEq(sortValueB) ? 0 : -1)
+    return datetimeEq(a) > datetimeEq(b) ? 1 : (datetimeEq(a) == datetimeEq(b) ? 0 : -1)
   })
 
-  sortedLessons.forEach(i => {
+  lessons.forEach(i => {
     let day = getDay(i.date)
 
     let parentNode = document.getElementById(`${day}Collapse`).firstChild
