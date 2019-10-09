@@ -97,7 +97,7 @@ window.onload = () => {
 
   let lessons = timetable.timetableItems
 
-  // Sort lessons after startTime and date
+  // Sort lessons after startTime and dates
   lessons.sort((a, b) => {
     function datetimeEq(e) {
       let d = e.date.split("/")
@@ -108,7 +108,24 @@ window.onload = () => {
     return datetimeEq(a) > datetimeEq(b) ? 1 : (datetimeEq(a) == datetimeEq(b) ? 0 : -1)
   })
 
-  lessons.forEach(i => {
+  // TODO: deep copy
+  let showLessons = []
+  for (let i = 0; i < lessons.length; i++) {
+    if (i < lessons.length - 1) {
+      if(lessons[i].endTime === lessons[i + 1].startTime && lessons[i].teachingGroupId === lessons[i + 1].teachingGroupId) {
+        let l = lessons[i]
+        l.endTime = lessons[i + 1].endTime
+        showLessons.push(l)
+        i++
+      } else {
+        showLessons.push(lessons[i])
+      }
+    } else {
+      showLessons.push(lessons[i])
+    }
+  }
+
+  showLessons.forEach(i => {
     let day = getDay(i.date)
 
     let parentNode = document.getElementById(`${day}Collapse`).firstChild
