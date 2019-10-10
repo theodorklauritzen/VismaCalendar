@@ -87,15 +87,46 @@ window.onload = () => {
 
     let body = document.createElement("div")
     let st = lesson.startTime ? lesson.startTime : "Ikke satt"
+    let et = lesson.endTime ? lesson.endTime : "Ikke satt"
     let loc = lesson.locations ? lesson.locations[0] : "Ikke satt"
     let tn = lesson.teacherName ? lesson.teacherName : "Ikke satt"
-    body.innerHTML = `Starter: ${st}<br>Rom: ${loc}<br>Lærer: ${tn}`
+    body.innerHTML = `Tid: ${st} - ${et}<br>Rom: ${loc}<br>Lærer: ${tn}`
     ret.appendChild(body)
 
     return ret
   }
 
-  timetable.timetableItems.forEach(i => {
+  let lessons = timetable.timetableItems
+
+  // Sort lessons after startTime and dates
+  lessons.sort((a, b) => {
+    function datetimeEq(e) {
+      let d = e.date.split("/")
+      let t = e.startTime.split(":")
+      return parseInt(d[2]) * 10000 * 24 * 60 + parseInt(d[1]) * 100 * 24 * 60 + parseInt(d[0]) * 24 * 60 + parseInt(t[0]) * 60 + parseInt(t[1])
+    }
+
+    return datetimeEq(a) > datetimeEq(b) ? 1 : (datetimeEq(a) == datetimeEq(b) ? 0 : -1)
+  })
+
+  // TODO: deep copy
+  /*let showLessons = []
+  for (let i = 0; i < lessons.length; i++) {
+    if (i < lessons.length - 1) {
+      if(lessons[i].endTime === lessons[i + 1].startTime && lessons[i].teachingGroupId === lessons[i + 1].teachingGroupId) {
+        let l = lessons[i]
+        l.endTime = lessons[i + 1].endTime
+        showLessons.push(l)
+        i++
+      } else {
+        showLessons.push(lessons[i])
+      }
+    } else {
+      showLessons.push(lessons[i])
+    }
+  }*/
+
+  lessons.forEach(i => {
     let day = getDay(i.date)
 
     let parentNode = document.getElementById(`${day}Collapse`).firstChild

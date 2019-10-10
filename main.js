@@ -1,4 +1,7 @@
 require('dotenv').config()
+
+const schools = require('./schools');
+
 const phantom = require('phantom');
 
 const express = require('express')
@@ -29,12 +32,12 @@ function nearestMonday() {
   return dd + "/" + mm + "/" + yyyy
 }
 
-function getTimetable(login_name, password, callback) {
-  const FEIDE_LOGIN_PAGE = "https://valler-vgs.inschool.visma.no/Login.jsp?saml_idp=feide";
+function getTimetable(login_name, password, schoolLink, callback) {
+  const FEIDE_LOGIN_PAGE = `${schoolLink}/Login.jsp?saml_idp=feide`;
   //const VISMA_TIMETABLE = `https://valler-vgs.inschool.visma.no/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=` + nearestMonday();
-  const VISMA_TIMETABLE_1 = "https://valler-vgs.inschool.visma.no/control/timetablev2/learner/"
+  const VISMA_TIMETABLE_1 = `${schoolLink}/control/timetablev2/learner/`
   const VISMA_TIMETABLE_2 = "/fetch/ALL/0/current?forWeek=" + nearestMonday();
-  const VISMA_LEARNERID = "https://valler-vgs.inschool.visma.no/control/permissions/user/";
+  const VISMA_LEARNERID = `${schoolLink}/control/permissions/user/`;
 
   (async function () {
     const instance = await phantom.create();
@@ -93,7 +96,7 @@ function getTimetable(login_name, password, callback) {
             return document.title
           })
           console.log(res)
-          if(res === "Log in with Feide" || res === "Logg inn med Feide") {
+          if(res === "Log in with Feide" || res === "Logg inn med Feide" || res === "Visma InSchool | Innlogging") {
             console.log("FAILED to log in")
             await instance.exit()
             callback(null, "Failed to login")
@@ -135,32 +138,49 @@ app.get("/about", (req, res) => {
   res.render("about")
 })
 
-app.get("/join", (req, res) => {
-  res.render("join")
+app.get("/terms", (req, res) => {
+  res.render("terms")
 })
 
+function getSchool(name) {
+  for (let i = 0; i < schools.length; i++) {
+    if(schools[i].name === name) {
+      return schools[i]
+    }
+  }
+
+  return null
+}
+
 app.get("/login", (req, res) => {
-  let data = {}
-  if (req.query.error == 401) data.errorMsg = "Feil brukernavn eller passord"
-  if (req.query.error == 500) data.errorMsg = "Vi kan dessverre ikke hente timeplanen din, grunnet en ukjent serverfeil hos Visma.  Nettsiden funker så snart Visma retter den."
+  let data = {
+    schools: schools
+  }
+  if (req.query.error == 401) data.errorMsg = "Feil brukernavn, passord eller skole"
+  if (req.query.error == 500) data.errorMsg = "Vi kan dessverre ikke hente timeplanen din, grunnet en ukjent feil.  Årsaken er antageligvis en endring på nettsida til Visma."
   res.render("login", data)
 })
 
 app.post("/timetable", (req, res) => {
   const loginName = req.body.login_name.toLowerCase()
-  getTimetable(loginName, req.body.password, (timetable, err) => {
-    if(err == "ERROR") {
-      res.redirect("/login?error=500")
-    } else if(err == "Failed to login") {
-      res.redirect("/login?error=401")
-    } else {
-      //console.log(timetable.timetableItems)
-      //res.send(timetable)
-      res.render("timetable", {
-        timetable: JSON.stringify(timetable)
-      })
-    }
-  })
+  const school = getSchool(req.body.school)
+  if (school) {
+    getTimetable(loginName, req.body.password, school.link, (timetable, err) => {
+      if(err == "ERROR") {
+        res.redirect(`/login?error=500`)
+      } else if(err == "Failed to login") {
+        res.redirect(`/login?error=401`)
+      } else {
+        //console.log(timetable.timetableItems)
+        //res.send(timetable)
+        res.render("timetable", {
+          timetable: JSON.stringify(timetable)
+        })
+      }
+    })
+  } else {
+    res.redirect("/login?error=401")
+  }
 })
 
 app.use(express.static('public'))
