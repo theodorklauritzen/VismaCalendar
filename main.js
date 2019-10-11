@@ -32,11 +32,11 @@ function nearestMonday() {
   return dd + "/" + mm + "/" + yyyy
 }
 
-function getTimetable(login_name, password, schoolLink, callback) {
+function getTimetable(login_name, password, schoolLink, date, callback) {
   const FEIDE_LOGIN_PAGE = `${schoolLink}/Login.jsp?saml_idp=feide`;
   //const VISMA_TIMETABLE = `https://valler-vgs.inschool.visma.no/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=` + nearestMonday();
   const VISMA_TIMETABLE_1 = `${schoolLink}/control/timetablev2/learner/`
-  const VISMA_TIMETABLE_2 = "/fetch/ALL/0/current?forWeek=" + nearestMonday();
+  const VISMA_TIMETABLE_2 = "/fetch/ALL/0/current?forWeek=" + date;
   const VISMA_LEARNERID = `${schoolLink}/control/permissions/user/`;
 
   (async function () {
@@ -164,8 +164,10 @@ app.get("/login", (req, res) => {
 app.post("/timetable", (req, res) => {
   const loginName = req.body.login_name.toLowerCase()
   const school = getSchool(req.body.school)
-  if (school) {
-    getTimetable(loginName, req.body.password, school.link, (timetable, err) => {
+  if (!req.body.date.match(/\d{2}\/\d{2}\/\d{4}/)) {
+    res.status(400).send("Invalid date")
+  } else if (school) {
+    getTimetable(loginName, req.body.password, school.link, req.body.date, (timetable, err) => {
       if(err == "ERROR") {
         res.redirect(`/login?error=500`)
       } else if(err == "Failed to login") {
