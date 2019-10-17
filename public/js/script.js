@@ -5,7 +5,7 @@ if(url[0] === "http:" && url[2] === "visma-calendar.herokuapp.com") {
 }
 
 // Ensure all users aggree on the terms
-if(!localStorage.getItem('school')) {
+/*if(!localStorage.getItem('school')) {
   alert("Før du bruker nettsiden må du godta betningelsene.  De finner du på visma-calendar.herokuapp.com/terms")
   localStorage.setItem('school', "valler")
-}
+}*/
