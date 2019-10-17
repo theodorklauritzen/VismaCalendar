@@ -2,3 +2,16 @@
   padding-top: 30px;
   padding-bottom: 30px;
 }
+
+.alert-security {
+  border: 2px solid;
+  padding-bottom: 4px;
+}
+
+.btn-security-alert {
+  background-color: #FFF;
+  border: 1px solid;
+  border-color: #999;
+  padding-top: 5px;
+  margin-top: 7px;
+}
