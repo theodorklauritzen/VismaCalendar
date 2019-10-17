@@ -4,8 +4,8 @@ const schools = require('./schools');
 
 const phantom = require('phantom');
 
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 
 const exphbs = require('express-handlebars');
 app.engine('handlebars', exphbs());
@@ -17,19 +17,20 @@ app.use(bodyParser.urlencoded({
 }));
 
 function getTimetable(login_name, password, schoolLink, date, callback) {
+
   (async function () {
+
     const instance = await phantom.create();
     const page = await instance.createPage();
 
-    let finishedLoading = 0
+    let finishedLoading = 0;
 
     async function getTimetableJSON(learnerID) {
-      let status = await page.open(`${schoolLink}/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=${date}`)
+      const status = await page.open(`${schoolLink}/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=${date}`);
       let content = await page.property('content');
-      instance.exit()
-
+      instance.exit();
       if (status != "success") {
-        console.error("FAILED to get timetable")
+        console.error("FAILED to get timetable");
         callback(null, "ERROR")
       } else {
         content = content.slice(84, content.length - 20)
@@ -46,7 +47,7 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
           console.log("Loading Visma");
           break;
         case 2:
-          console.log("Loading VisId")
+          console.log("Loading VisId");
           break;
         case 3:
           console.log("Loading Timetable");
@@ -56,7 +57,6 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
 
     await page.on('onLoadFinished', () => {
       finishedLoading++
-
       if (finishedLoading == 1) {
         page.evaluate(function (username, password) {
           document.getElementById("username").value = username
@@ -67,13 +67,15 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
 
       if (finishedLoading == 2) {
         (async function () {
-          let res = await page.evaluate(document.title)
+          const res = await page.evaluate(function () {
+            return document.title
+          })
           if (res === "Log in with Feide" || res === "Logg inn med Feide" || res === "Visma InSchool | Innlogging") {
             console.log("FAILED to log in")
             instance.exit()
             callback(null, "Failed to login")
           } else {
-            console.log("Login successfull");
+            console.log("Login successful");
           }
         })();
       }
@@ -82,18 +84,18 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
         (async function () {
           let status = await page.open(`${schoolLink}/control/permissions/user/`)
           let content = await page.property('content');
-
           if (status != "success") {
             console.error("FAILED to get timetable")
             callback(null, "ERROR")
             instance.exit()
           } else {
             content = content.slice(84, content.length - 20)
-            getTimetableJSON(JSON.parse(content))
+            getTimetableJSON(JSON.parse(content).learnerId)
           }
         })();
       }
     })
+    const status = await page.open(`${schoolLink}/Login.jsp?saml_idp=feide`);
   })();
 }
 
