@@ -16,42 +16,19 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
-function nearestMonday() {
-  let today = new Date()
-  let dayofWeek = today.getDay()
-
-  if (dayofWeek <= 6) {
-    today.setDate(today.getDate() - dayofWeek + 1)
-  } else {
-    today.setDate(today.getDate() + 1)
-  }
-
-  let dd = String(today.getDate()).padStart(2, '0');
-  let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-  let yyyy = today.getFullYear();
-  return dd + "/" + mm + "/" + yyyy
-}
-
 function getTimetable(login_name, password, schoolLink, date, callback) {
-  const FEIDE_LOGIN_PAGE = `${schoolLink}/Login.jsp?saml_idp=feide`;
-  //const VISMA_TIMETABLE = `https://valler-vgs.inschool.visma.no/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=` + nearestMonday();
-  const VISMA_TIMETABLE_1 = `${schoolLink}/control/timetablev2/learner/`
-  const VISMA_TIMETABLE_2 = "/fetch/ALL/0/current?forWeek=" + date;
-  const VISMA_LEARNERID = `${schoolLink}/control/permissions/user/`;
-
   (async function () {
     const instance = await phantom.create();
     const page = await instance.createPage();
 
     let finishedLoading = 0
-    let userPermissions = {}
 
-    async function getTimetableJSON() {
-      let status = await page.open(VISMA_TIMETABLE_1 + userPermissions.learnerId + VISMA_TIMETABLE_2)
+    async function getTimetableJSON(learnerID) {
+      let status = await page.open(`${schoolLink}/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=${date}`)
       let content = await page.property('content');
-      await instance.exit()
+      instance.exit()
 
-      if(status != "success") {
+      if (status != "success") {
         console.error("FAILED to get timetable")
         callback(null, "ERROR")
       } else {
@@ -77,56 +54,46 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
       }
     })
 
-    await page.on('onLoadFinished', status => {
+    await page.on('onLoadFinished', () => {
       finishedLoading++
-      //console.log("FINISHED LOADING", finishedLoading)
 
-      if(finishedLoading == 1) {
-        page.evaluate(function(username, password) {
+      if (finishedLoading == 1) {
+        page.evaluate(function (username, password) {
           document.getElementById("username").value = username
           document.getElementById("password").value = password
           document.getElementsByName("f")[0].submit();
         }, login_name, password)
       }
 
-      if(finishedLoading == 2) {
-        //page.render("example.png")
-        (async function() {
-          let res = await page.evaluate(function() {
-            return document.title
-          })
-          console.log(res)
-          if(res === "Log in with Feide" || res === "Logg inn med Feide" || res === "Visma InSchool | Innlogging") {
+      if (finishedLoading == 2) {
+        (async function () {
+          let res = await page.evaluate(document.title)
+          if (res === "Log in with Feide" || res === "Logg inn med Feide" || res === "Visma InSchool | Innlogging") {
             console.log("FAILED to log in")
-            await instance.exit()
+            instance.exit()
             callback(null, "Failed to login")
           } else {
             console.log("Login successfull");
           }
-
-          return true;
         })();
       }
 
-      if(finishedLoading == 3) {
-        (async function() {
-          let status = await page.open(VISMA_LEARNERID)
+      if (finishedLoading == 3) {
+        (async function () {
+          let status = await page.open(`${schoolLink}/control/permissions/user/`)
           let content = await page.property('content');
 
-          if(status != "success") {
+          if (status != "success") {
             console.error("FAILED to get timetable")
             callback(null, "ERROR")
-            await instance.exit()
+            instance.exit()
           } else {
             content = content.slice(84, content.length - 20)
-            userPermissions = JSON.parse(content)
-            getTimetableJSON()
+            getTimetableJSON(JSON.parse(content))
           }
         })();
       }
     })
-
-    const status = await page.open(FEIDE_LOGIN_PAGE);
   })();
 }
 
@@ -142,16 +109,6 @@ app.get("/terms", (req, res) => {
   res.render("terms")
 })
 
-function getSchool(name) {
-  for (let i = 0; i < schools.length; i++) {
-    if(schools[i].name === name) {
-      return schools[i]
-    }
-  }
-
-  return null
-}
-
 app.get("/login", (req, res) => {
   let data = {
     schools: schools
@@ -163,18 +120,21 @@ app.get("/login", (req, res) => {
 
 app.post("/timetable", (req, res) => {
   const loginName = req.body.login_name.toLowerCase()
-  const school = getSchool(req.body.school)
+  let school;
+  for (let i = 0; i < schools.length; i++) {
+    if (schools[i].name === req.body.school) {
+      school = schools[i]
+    }
+  }
   if (!req.body.date.match(/\d{2}\/\d{2}\/\d{4}/)) {
     res.status(400).send("Invalid date")
   } else if (school) {
     getTimetable(loginName, req.body.password, school.link, req.body.date, (timetable, err) => {
-      if(err == "ERROR") {
+      if (err == "ERROR") {
         res.redirect(`/login?error=500`)
-      } else if(err == "Failed to login") {
+      } else if (err == "Failed to login") {
         res.redirect(`/login?error=401`)
       } else {
-        //console.log(timetable.timetableItems)
-        //res.send(timetable)
         res.render("timetable", {
           timetable: JSON.stringify(timetable)
         })
