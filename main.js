@@ -18,6 +18,11 @@ app.use(bodyParser.urlencoded({
 
 function getTimetable(login_name, password, schoolLink, date, callback) {
 
+  const FEIDE_LOGIN_PAGE = `${schoolLink}/Login.jsp?saml_idp=feide`;
+  const VISMA_TIMETABLE_1 = `${schoolLink}/control/timetablev2/learner/`
+  const VISMA_TIMETABLE_2 = "/fetch/ALL/0/current?forWeek=" + date;
+  const VISMA_LEARNERID = `${schoolLink}/control/permissions/user/`;
+
   (async function () {
 
     const instance = await phantom.create();
@@ -25,8 +30,8 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
 
     let finishedLoading = 0;
 
-    async function getTimetableJSON(learnerID) {
-      const status = await page.open(`${schoolLink}/control/timetablev2/learner/${learnerID}/fetch/ALL/0/current?forWeek=${date}`);
+    async function getTimetableJSON(userPermissions) {
+      const status = await page.open(VISMA_TIMETABLE_1 + userPermissions.learnerId + VISMA_TIMETABLE_2);
       let content = await page.property('content');
       instance.exit();
       if (status != "success") {
@@ -82,7 +87,7 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
 
       if (finishedLoading == 3) {
         (async function () {
-          let status = await page.open(`${schoolLink}/control/permissions/user/`)
+          let status = await page.open(VISMA_LEARNERID)
           let content = await page.property('content');
           if (status != "success") {
             console.error("FAILED to get timetable")
@@ -90,14 +95,23 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
             instance.exit()
           } else {
             content = content.slice(84, content.length - 20)
-            getTimetableJSON(JSON.parse(content).learnerId)
+            getTimetableJSON(JSON.parse(content))
           }
         })();
       }
     })
-    const status = await page.open(`${schoolLink}/Login.jsp?saml_idp=feide`);
+    const status = await page.open(FEIDE_LOGIN_PAGE);
   })();
 }
+
+function getSchool(name) {
+  for (let i = 0; i < schools.length; i++) {
+    if (schools[i].name === name) {
+      return schools[i]
+    }
+  }
+}
+
 
 app.get('/', (req, res) => {
   res.redirect("/login")
@@ -121,13 +135,8 @@ app.get("/login", (req, res) => {
 })
 
 app.post("/timetable", (req, res) => {
-  const loginName = req.body.login_name.toLowerCase()
-  let school;
-  for (let i = 0; i < schools.length; i++) {
-    if (schools[i].name === req.body.school) {
-      school = schools[i]
-    }
-  }
+  const loginName = req.body.login_name.toLowerCase();
+  const school = getSchool(req.body.school);
   if (!req.body.date.match(/\d{2}\/\d{2}\/\d{4}/)) {
     res.status(400).send("Invalid date")
   } else if (school) {
