@@ -104,15 +104,6 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
   })();
 }
 
-function getSchool(name) {
-  for (let i = 0; i < schools.length; i++) {
-    if (schools[i].name === name) {
-      return schools[i]
-    }
-  }
-}
-
-
 app.get('/', (req, res) => {
   res.redirect("/login")
 })
@@ -124,6 +115,14 @@ app.get("/about", (req, res) => {
 app.get("/terms", (req, res) => {
   res.render("terms")
 })
+
+function getSchool(name) {
+  for (let i = 0; i < schools.length; i++) {
+    if (schools[i].name === name) {
+      return schools[i]
+    }
+  }
+}
 
 app.get("/login", (req, res) => {
   let data = {
