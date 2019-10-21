@@ -161,4 +161,4 @@ app.use((req, res) => {
   res.status(404).render("404")
 })
 
-app.listen(process.env.PORT, () => console.log(`Listening on: ${process.env.PORT}`))
+app.listen(process.env.PORT || 80, () => console.log(`Listening on: ${process.env.PORT || 80}`))
