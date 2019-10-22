@@ -108,6 +108,10 @@ app.get('/', (req, res) => {
   res.redirect("/login")
 })
 
+app.get("/timetable", (req, res) => {
+  res.redirect("/login")
+})
+
 app.get("/about", (req, res) => {
   res.render("about")
 })
