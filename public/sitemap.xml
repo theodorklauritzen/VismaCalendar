@@ -7,18 +7,18 @@
 <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
 <url>
-  <loc>https://visma-calendar.herokuapp.com/login</loc>
-  <lastmod>2019-09-12T08:24:17+00:00</lastmod>
+  <loc>https://timeplan.herokuapp.com/login</loc>
+  <lastmod>2019-10-23T11:51:50+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>https://visma-calendar.herokuapp.com/about</loc>
-  <lastmod>2019-09-25T08:24:17+00:00</lastmod>
+  <loc>https://timeplan.herokuapp.com/about</loc>
+  <lastmod>2019-10-23T11:51:50+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://visma-calendar.herokuapp.com/terms</loc>
-  <lastmod>2019-09-25T11:33:17+00:00</lastmod>
+  <loc>https://timeplan.herokuapp.com/terms</loc>
+  <lastmod>2019-10-23T11:51:50+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 
