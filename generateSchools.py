@@ -4,7 +4,7 @@ import json
 
 TARGET_FILE = "schools.json"
 
-schoolString = """
+afkSchoolString = """
 <option value="https://asker-vgs.inschool.visma.no">Asker videregående skole</option>
 <option value="https://bjertnes-vgs.inschool.visma.no">Bjertnes videregående skole</option>
 <option value="https://bjorkelangen-vgs.inschool.visma.no">Bjørkelangen videregående skole</option>
@@ -43,6 +43,12 @@ schoolString = """
 <option value="https://akershus.inschool.visma.no">Akershus skoleeier</option>
 """
 
+otherSchools = [{
+    'name': 'tryggheim',
+    'displayname': 'Tryggheim',
+    'link': 'https://tryggheim.inschool.visma.no'
+}]
+
 def extractData(s):
     link = s.split("\"")[1]
     name = s.split(">")[1].split("<")[0]
@@ -71,11 +77,18 @@ def generateObject(schoolsString):
 
     return ret
 
-def main():
-    dictObj = generateObject(schoolString)
+def sortSchools(school):
+    return school['name']
 
-    with open('schools.json', 'w') as json_file:
-        json.dump(dictObj, json_file)
+def main():
+    schools = generateObject(afkSchoolString)
+
+    schools = schools + otherSchools
+
+    schools.sort(key = sortSchools)
+
+    with open(TARGET_FILE, 'w') as json_file:
+        json.dump(schools, json_file)
 
 if __name__ == "__main__":
     main()
