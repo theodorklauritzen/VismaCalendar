@@ -45,7 +45,7 @@ afkSchoolString = """
 
 otherSchools = [{
     'name': 'tryggheim',
-    'displayname': 'Tryggheim',
+    'displayName': 'Tryggheim',
     'link': 'https://tryggheim.inschool.visma.no'
 }]
 
@@ -78,7 +78,7 @@ def generateObject(schoolsString):
     return ret
 
 def sortSchools(school):
-    return school['name']
+    return school['displayName']
 
 def main():
     schools = generateObject(afkSchoolString)
