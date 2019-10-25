@@ -39,7 +39,12 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
         callback(null, "ERROR")
       } else {
         content = content.slice(84, content.length - 20)
-        callback(JSON.parse(content), null)
+        ret = {
+          userPermissions: userPermissions,
+          timetable: JSON.parse(content),
+          fetched: Date.now()
+        }
+        callback(ret, null)
       }
     }
 
@@ -150,7 +155,7 @@ app.post("/timetable", (req, res) => {
         res.redirect(`/login?error=401`)
       } else {
         res.render("timetable", {
-          timetable: JSON.stringify(timetable)
+          data: JSON.stringify(timetable)
         })
       }
     })

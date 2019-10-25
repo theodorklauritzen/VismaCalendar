@@ -30,3 +30,7 @@ button:focus.dayHeading {
   margin-top: 15px;
   margin-bottom: 15px;
 }
+
+#updatedInfo {
+  font-size: 12px;
+}

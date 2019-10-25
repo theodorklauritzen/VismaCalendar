@@ -1,4 +1,5 @@
-const timetable = JSON.parse(timetableString);
+const data = JSON.parse(rawData);
+const timetable = data.timetable
 
 const daysOfWeek = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag"]
 
@@ -43,6 +44,12 @@ function createDOM(id, date) {
   dom.appendChild(domCollapse)
 
   return dom
+}
+
+function addUpdatedInfo() {
+  dom = document.getElementById("updatedInfo")
+  let d = new Date(data.fetched)
+  dom.innerHTML = `Navn: ${data.userPermissions.displayName}<br>Oppdatert: ${d.toLocaleString("no-nb")}`
 }
 
 window.onload = () => {
@@ -136,4 +143,6 @@ window.onload = () => {
   // Show current day
   document.getElementById(`${showDay}Collapse`).classList.add("show")
   document.getElementById(showDay).scrollIntoView()
+
+  addUpdatedInfo()
 }
