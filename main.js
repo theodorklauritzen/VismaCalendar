@@ -142,9 +142,9 @@ app.get("/login", (req, res) => {
   res.render("login", data)
 })
 
-app.post("/timetable", (req, res) => {
-  const loginName = req.body.login_name.toLowerCase();
-  const school = getSchool(req.body.school);
+function requstTimetable(login_name, password, schoolName, date, callback) {
+  const loginName = login_name.toLowerCase();
+  const school = getSchool(schoolName);
 
   function validateDate(date) {
     // This will not catch some invalid dates (31/04 or 29/02)
@@ -155,23 +155,44 @@ app.post("/timetable", (req, res) => {
     return false
   }
 
-  if (!validateDate(req.body.date)) {
-    res.status(400).send("Invalid date")
+  if (!validateDate(date)) {
+    //res.status(400).send("Invalid date")
+    callback(400, null)
   } else if (school) {
-    getTimetable(loginName, req.body.password, school.link, req.body.date, (timetable, err) => {
+    getTimetable(loginName, password, school.link, date, (data, err) => {
       if (err == "ERROR") {
-        res.redirect(`/login?error=500`)
+        //res.redirect(`/login?error=500`)
+        callback(500, null)
       } else if (err == "Failed to login") {
-        res.redirect(`/login?error=401`)
+        //res.redirect(`/login?error=401`)
+        callback(401, null)
       } else {
-        res.render("timetable", {
-          data: JSON.stringify(timetable)
-        })
+        //res.render("timetable", {
+        //  data: JSON.stringify(data)
+        //})
+        callback(200, data)
       }
     })
   } else {
-    res.redirect("/login?error=401")
+    //res.redirect("/login?error=401")
+    callback(401, null)
   }
+}
+
+app.post("/timetable", (req, res) => {
+  requstTimetable(req.body.login_name, req.body.password, req.body.school, req.body.date, (status, data) => {
+    if (status === 200) {
+      res.render("timetable", {
+        data: JSON.stringify(data)
+      })
+    } else if (status === 400) {
+      res.status(400).send("Invalid date")
+    } else if (status === 401) {
+      res.redirect("/login?error=401")
+    } else if(status === 500) {
+      res.redirect(`/login?error=500`)
+    }
+  })
 })
 
 app.use(express.static('public'))
