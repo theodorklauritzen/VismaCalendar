@@ -145,7 +145,17 @@ app.get("/login", (req, res) => {
 app.post("/timetable", (req, res) => {
   const loginName = req.body.login_name.toLowerCase();
   const school = getSchool(req.body.school);
-  if (!req.body.date.match(/\d{2}\/\d{2}\/\d{4}/)) {
+
+  function validateDate(date) {
+    // This will not catch some invalid dates (31/04 or 29/02)
+    if(date.match(/\d{2}\/\d{2}\/\d{4}/)) {
+      s = date.split("/")
+      return !isNaN(Date.parse(`${s[1]}/${s[0]}/${s[2]}`))
+    }
+    return false
+  }
+
+  if (!validateDate(req.body.date)) {
     res.status(400).send("Invalid date")
   } else if (school) {
     getTimetable(loginName, req.body.password, school.link, req.body.date, (timetable, err) => {
