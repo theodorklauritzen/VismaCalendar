@@ -195,6 +195,12 @@ app.post("/timetable", (req, res) => {
   })
 })
 
+app.post("/timetableJSON", (req, res) => {
+  requstTimetable(req.body.login_name, req.body.password, req.body.school, req.body.date, (status, data) => {
+    res.status(status).send(data)
+  })
+})
+
 app.use(express.static('public'))
 
 app.use((req, res) => {
