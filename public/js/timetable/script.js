@@ -3,7 +3,7 @@ const timetable = JSON.parse(timetableString);
 const daysOfWeek = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag"]
 
 const subjects = ["Matematikk", "Fransk", "Spansk", "Tysk", "Fysikk", "Kjemi", "Biologi", "Programmering", "Kunst", "Design", "Kroppsøving", "Geografi", "Norsk", "Samfunnsfag", "Engelsk", "Naturfag", "Filosofi", "Historie", "Sosiologi", "Politikk", "Psykologi", "Rettslære", "Samfunnsøkonomi", "Økonomistyring", "Ledelse", "Teknologi", "Religion", "Toppidrett"]
-const colors = ["#AACCEE", "rgb(230, 180, 230)", "rgb(180, 230, 230)", "rgb(180, 180, 230)", "rgb(180, 230, 180)", "rgb(230, 180, 180)", "rgb(120, 230, 230)", "rgb(120, 120, 230)", "rgb(120, 230, 120)", "rgb(230, 120, 120)", "rgb(120, 180, 230)", "rgb(180, 120, 230)", "rgb(120, 230, 180)", "rgb(180, 230, 120)", "rgb(230, 180, 120)", "rgb(230, 120, 180)", "#FFABAB", "#e6beff", "#BFFCC6"]
+const colors = ["#AACCEE", "rgb(230, 180, 230)", "rgb(180, 230, 230)", "rgb(180, 180, 230)", "rgb(180, 230, 180)", "rgb(230, 180, 180)", "rgb(120, 230, 230)", "rgb(120, 120, 230)", "rgb(120, 230, 120)", "rgb(230, 120, 120)", "rgb(120, 180, 230)", "rgb(180, 120, 230)", "rgb(120, 230, 180)", "rgb(180, 230, 120)", "rgb(230, 180, 120)", "rgb(230, 120, 180)", "#FFABAB", "#e6beff", "#BFFCC6", "rgb(255, 96, 96)", "rgb(255, 175, 96)", "rgb(255, 255, 96)", "rgb(175, 255, 96)", "rgb(96, 255, 96)", "rgb(96, 255, 175)", "rgb(96, 255, 255)", "rgb(96, 175, 255)", "rgb(96, 96, 255)", "rgb(175, 96, 255)", "rgb(255, 96, 255)", "rgb(255, 96, 175)"]
 
 // Create layout
 // https://getbootstrap.com/docs/4.3/components/collapse/#accordion-example
