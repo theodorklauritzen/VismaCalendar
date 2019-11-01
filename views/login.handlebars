@@ -20,20 +20,22 @@
     <label for="school" class="sr-only">Skole</label>
     <select id="school" class="form-control" name="school" required="">
       {{#each schools}}
-        <option value="{{name}}">{{displayName}}</option>
+      <option value="{{name}}">{{displayName}}</option>
       {{/each}}
     </select>
 
     <input id="weekDate" type="hidden" name="date" value="">
 
     <label for="username" class="sr-only">Feide brukernavn</label>
-    <input type="text" id="username" name="login_name" class="form-control" placeholder="Feide brukernavn" autocapitalize="off" required="" autofocus="">
+    <input type="text" id="username" name="login_name" class="form-control" placeholder="Feide brukernavn"
+      autocapitalize="off" required="" autofocus="">
 
     <label for="inputPassword" class="sr-only">Feide passord</label>
-    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Feide passord" required="">
+    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Feide passord"
+      required="">
 
     <button id="loginBtn" class="btn btn-md btn-primary btn-block" type="submit">Logg inn</button>
   </form>
   <br>
-  <p class="text-muted">Etter å ha logget inn vil det gå noen sekunder, mens vi henter timeplanen din.</p>
+  <p>Etter å ha logget inn, vil det ta noen sekunder mens vi henter timeplanen din.</p>
 </div>

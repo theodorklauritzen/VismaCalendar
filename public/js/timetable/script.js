@@ -3,6 +3,9 @@ const timetable = data.timetable
 
 const daysOfWeek = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag"]
 
+const subjects = ["Matematikk", "Fransk", "Spansk", "Tysk", "Fysikk", "Kjemi", "Biologi", "Programmering", "Kunst", "Design", "Kroppsøving", "Geografi", "Norsk", "Samfunnsfag", "Engelsk", "Naturfag", "Filosofi", "Historie", "Sosiologi", "Politikk", "Psykologi", "Rettslære", "Samfunnsøkonomi", "Økonomistyring", "Ledelse", "Teknologi", "Religion", "Toppidrett"]
+const colors = ["#AACCEE", "rgb(230, 180, 230)", "rgb(180, 230, 230)", "rgb(180, 180, 230)", "rgb(180, 230, 180)", "rgb(230, 180, 180)", "rgb(120, 230, 230)", "rgb(120, 120, 230)", "rgb(120, 230, 120)", "rgb(230, 120, 120)", "rgb(120, 180, 230)", "rgb(180, 120, 230)", "rgb(120, 230, 180)", "rgb(180, 230, 120)", "rgb(230, 180, 120)", "rgb(230, 120, 180)", "#FFABAB", "#e6beff", "#BFFCC6", "rgb(255, 96, 96)", "rgb(255, 175, 96)", "rgb(255, 255, 96)", "rgb(175, 255, 96)", "rgb(96, 255, 96)", "rgb(96, 255, 175)", "rgb(96, 255, 255)", "rgb(96, 175, 255)", "rgb(96, 96, 255)", "rgb(175, 96, 255)", "rgb(255, 96, 255)", "rgb(255, 96, 175)"]
+
 // Create layout
 // https://getbootstrap.com/docs/4.3/components/collapse/#accordion-example
 function createDOM(id, date) {
@@ -88,17 +91,35 @@ window.onload = () => {
     let ret = document.createElement("div")
     ret.classList.add("lesson")
 
+    ret.style.backgroundImage = "linear-gradient(to left, #fea3aa,#f8b88b,#faf884,#baed91,#b2cefe,#f2a2e8) ";
+
+    if (lesson.subject) {
+      for (i = 0; i < subjects.length; i++) {
+        if (lesson.subject.includes(subjects[i])) {
+          ret.style.backgroundColor = colors[i];
+          ret.style.backgroundImage = "";
+        }
+      }
+    }
+
     let subjectHeading = document.createElement("h6")
-    subjectHeading.innerHTML = `<strong>${lesson.subject}</strong>`
+    subjectHeading.innerHTML = (lesson.subject) ? `<strong>${lesson.subject}</strong>` : "<strong>Myserietime</strong";
     ret.appendChild(subjectHeading)
 
-    let body = document.createElement("div")
     let st = lesson.startTime ? lesson.startTime : "Ikke satt"
     let et = lesson.endTime ? lesson.endTime : "Ikke satt"
-    let loc = lesson.locations ? lesson.locations[0] : "Ikke satt"
+    let loc = lesson.locations[0] ? lesson.locations[0] : "Ikke satt"
     let tn = lesson.teacherName ? lesson.teacherName : "Ikke satt"
-    body.innerHTML = `Tid: ${st} - ${et}<br>Rom: ${loc}<br>Lærer: ${tn}`
-    ret.appendChild(body)
+    let time = document.createElement("div")
+    time.innerHTML = `Tid: ${st} - ${et}`
+    let location = document.createElement("div")
+    location.innerHTML = `Rom: ${loc}`
+    let teacher = document.createElement("div")
+    teacher.innerHTML = `Lærer: ${tn}`
+    ret.appendChild(time)
+    ret.appendChild(location)
+    ret.appendChild(teacher)
+
 
     return ret
   }
