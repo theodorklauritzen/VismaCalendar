@@ -25,15 +25,16 @@ button:focus.dayHeading {
   padding: 15px 5px 15px 5px;
 }
 
+.lesson-info {
+  width: 100%;
+}
+
 .cardBody * {
-  display: flex;
   flex-direction: row;
   justify-content: space-between;
   flex-wrap: wrap;
 }
-.lesson * {
-  flex-basis: 50%;
-}
+
 .cardBody {
   border: 0px;
 }
