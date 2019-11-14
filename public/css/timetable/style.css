@@ -22,13 +22,28 @@ button:focus.dayHeading {
 }
 
 .lesson {
-  margin: 5px 0px 5px 0px;
-  background-color: #EEEEEE
+  padding: 15px 5px 15px 5px;
+}
+
+.lesson-info {
+  width: 100%;
+}
+
+.cardBody * {
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .cardBody {
-  margin-top: 15px;
-  margin-bottom: 15px;
+  border: 0px;
+}
+.card {
+  border: 0;
+}
+.card-header {
+  border: 1px solid rgba(0,0,0,.125);
+  background-color: rgb(240, 240, 240);
 }
 
 #updatedInfo {

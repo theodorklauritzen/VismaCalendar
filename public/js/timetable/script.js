@@ -87,18 +87,32 @@ window.onload = () => {
   function generateLesson(lesson) {
     let ret = document.createElement("div")
     ret.classList.add("lesson")
+    ret.style.backgroundColor = lesson.colour ? "#" + lesson.colour : "#FFF"
 
     let subjectHeading = document.createElement("h6")
     subjectHeading.innerHTML = `<strong>${lesson.subject}</strong>`
     ret.appendChild(subjectHeading)
 
-    let body = document.createElement("div")
     let st = lesson.startTime ? lesson.startTime : "Ikke satt"
     let et = lesson.endTime ? lesson.endTime : "Ikke satt"
-    let loc = lesson.locations ? lesson.locations[0] : "Ikke satt"
+    let loc = lesson.locations[0] ? lesson.locations[0] : "Ikke satt"
     let tn = lesson.teacherName ? lesson.teacherName : "Ikke satt"
-    body.innerHTML = `Tid: ${st} - ${et}<br>Rom: ${loc}<br>Lærer: ${tn}`
-    ret.appendChild(body)
+
+    let time = document.createElement("div")
+    time.classList.add("lesson-info")
+    time.innerHTML = `Tid: ${st} - ${et}`
+    ret.appendChild(time)
+
+    let location = document.createElement("div")
+    time.classList.add("lesson-info")
+    location.innerHTML = `Rom: ${loc}`
+    ret.appendChild(location)
+
+    let teacher = document.createElement("div")
+    time.classList.add("lesson-info")
+    teacher.innerHTML = `Lærer: ${tn}`
+    ret.appendChild(teacher)
+
 
     return ret
   }
