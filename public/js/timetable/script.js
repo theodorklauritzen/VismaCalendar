@@ -80,6 +80,7 @@ window.onload = () => {
   function generateLesson(lesson) {
     let ret = document.createElement("div")
     ret.classList.add("lesson")
+    ret.style.backgroundColor = lesson.colour ? "#" + lesson.colour : "#FFF"
 
     let subjectHeading = document.createElement("h6")
     subjectHeading.innerHTML = `<strong>${lesson.subject}</strong>`
