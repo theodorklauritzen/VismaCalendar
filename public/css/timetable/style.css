@@ -47,5 +47,6 @@ button:focus.dayHeading {
 }
 
 #updatedInfo {
+  color: #DDD;
   font-size: 12px;
 }
