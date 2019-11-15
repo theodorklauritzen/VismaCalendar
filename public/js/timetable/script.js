@@ -87,16 +87,17 @@ window.onload = () => {
   function generateLesson(lesson) {
     let ret = document.createElement("div")
     ret.classList.add("lesson")
-    ret.style.backgroundColor = lesson.colour ? "#" + lesson.colour : "#FFF"
+    //ret.style.backgroundColor = lesson.colour ? "#" + lesson.colour : "#FFF"
 
     let subjectHeading = document.createElement("h6")
-    subjectHeading.innerHTML = `<strong>${lesson.subject}</strong>`
+    let heading = lesson.type == "ACTIVITY" ? lesson.label : lesson.subject
+    subjectHeading.innerHTML = `<strong>${heading}</strong>`
     ret.appendChild(subjectHeading)
 
     let st = lesson.startTime ? lesson.startTime : "Ikke satt"
     let et = lesson.endTime ? lesson.endTime : "Ikke satt"
     let loc = lesson.locations[0] ? lesson.locations[0] : "Ikke satt"
-    let tn = lesson.teacherName ? lesson.teacherName : "Ikke satt"
+    let tn = (lesson.type == "SUBSTITUTION") ? "Vikar" : (lesson.teacherName ? lesson.teacherName : "Ikke satt")
 
     let time = document.createElement("div")
     time.classList.add("lesson-info")
@@ -108,11 +109,12 @@ window.onload = () => {
     location.innerHTML = `Rom: ${loc}`
     ret.appendChild(location)
 
-    let teacher = document.createElement("div")
-    time.classList.add("lesson-info")
-    teacher.innerHTML = `Lærer: ${tn}`
-    ret.appendChild(teacher)
-
+    if (lesson.type == "LESSON" || lesson.type == "SUBSTITUTION") {
+      let teacher = document.createElement("div")
+      time.classList.add("lesson-info")
+      teacher.innerHTML = `Lærer: ${tn}`
+      ret.appendChild(teacher)
+    }
 
     return ret
   }
