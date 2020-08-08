@@ -180,6 +180,8 @@ function requstTimetable(login_name, password, schoolName, date, callback) {
 }
 
 app.post("/timetable", (req, res) => {
+  res.redirect("/login")
+  /*
   requstTimetable(req.body.login_name, req.body.password, req.body.school, req.body.date, (status, data) => {
     if (status === 200) {
       res.render("timetable", {
@@ -193,6 +195,7 @@ app.post("/timetable", (req, res) => {
       res.redirect(`/login?error=500`)
     }
   })
+  */
 })
 
 app.post("/timetableJSON", (req, res) => {

@@ -2,7 +2,7 @@ function agree() {
   localStorage.setItem('agree', true);
 
   document.getElementById("security-alert").innerHTML = ""
-  document.getElementById("loginBtn").disabled = false
+  //document.getElementById("loginBtn").disabled = false
 }
 
 window.onload = function() {

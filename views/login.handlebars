@@ -2,15 +2,21 @@
 <link rel="stylesheet" href="/css/login/style.css">
 
 <div class="text-center">
+
   <div class="space">
     {{#if errorMsg}}
     <div class="alert alert-danger">
       {{errorMsg}}
     </div>
     {{/if}}
+
   </div>
 
   <h1 class="page-header">Logg inn</h1>
+
+  <div class="alert alert-primary">
+    Det er dessverer ikke mulig å se timeplanen sin før skolestart.
+  </div>
 
   <div id="security-alert">
 
@@ -34,7 +40,7 @@
     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Feide passord"
       required="">
 
-    <button id="loginBtn" class="btn btn-md btn-primary btn-block" type="submit">Logg inn</button>
+    <button id="loginBtn" class="btn btn-md btn-primary btn-block" type="submit" disabled>Logg inn</button>
   </form>
   <br>
   <p>Etter å ha logget inn, vil det ta noen sekunder mens vi henter timeplanen din.</p>
