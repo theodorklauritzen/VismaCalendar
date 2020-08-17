@@ -16,10 +16,14 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
-function getTimetable(login_name, password, schoolLink, date, callback) {
+// https://idp.feide.no/simplesaml/module.php/feide/login?    AuthState=_2f42d0d3c2c361485eb8ac4eec320a9a1b15ef159a:https://idp.feide.no/simplesaml/saml2/idp/SSOService.php?spentityid=valler-vgs.inschool.visma.no&org=viken.no
+// https://idp.feide.no/simplesaml/module.php/feide/selectorg?AuthState=_2f42d0d3c2c361485eb8ac4eec320a9a1b15ef159a:https://idp.feide.no/simplesaml/saml2/idp/SSOService.php?spentityid=valler-vgs.inschool.visma.no
+
+function getTimetable(login_name, password, schoolLink, date, organization, callback) {
 
   const FEIDE_LOGIN_PAGE = `${schoolLink}/Login.jsp?saml_idp=feide`;
-  const VISMA_TIMETABLE_1 = `${schoolLink}/control/timetablev2/learner/`
+  const FEIDE_SELECT_AFFILIATION = "https://idp.feide.no/simplesaml/module.php/feide/login?";
+  const VISMA_TIMETABLE_1 = `${schoolLink}/control/timetablev2/learner/`;
   const VISMA_TIMETABLE_2 = "/fetch/ALL/0/current?forWeek=" + date;
   const VISMA_LEARNERID = `${schoolLink}/control/permissions/user/`;
 
@@ -48,18 +52,24 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
       }
     }
 
+    let currUrl = null;
+
     await page.on('onUrlChanged', url => {
+      currUrl = url;
       switch (finishedLoading) {
         case 0:
-          console.log("Loading Feide login");
+          console.log("Loading Feide Fylke Select")
           break;
         case 1:
-          console.log("Loading Visma");
+          console.log("Loading Feide login");
           break;
         case 2:
-          console.log("Loading VisId");
+          console.log("Loading Visma");
           break;
         case 3:
+          console.log("Loading VisId");
+          break;
+        case 4:
           console.log("Loading Timetable");
           break;
       }
@@ -68,14 +78,20 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
     await page.on('onLoadFinished', () => {
       finishedLoading++
       if (finishedLoading == 1) {
+
+        let newUrl = FEIDE_SELECT_AFFILIATION + currUrl.split("?")[1] + "&org=" + organization;
+        page.open(newUrl)
+      }
+
+      if (finishedLoading == 2) {
         page.evaluate(function (username, password) {
-          document.getElementById("username").value = username
-          document.getElementById("password").value = password
+          document.getElementById("username").value = username;
+          document.getElementById("password").value = password;
           document.getElementsByName("f")[0].submit();
         }, login_name, password)
       }
 
-      if (finishedLoading == 2) {
+      if (finishedLoading == 3) {
         (async function () {
           const res = await page.evaluate(function () {
             return document.title
@@ -90,7 +106,7 @@ function getTimetable(login_name, password, schoolLink, date, callback) {
         })();
       }
 
-      if (finishedLoading == 3) {
+      if (finishedLoading == 4) {
         (async function () {
           let status = await page.open(VISMA_LEARNERID)
           let content = await page.property('content');
@@ -159,7 +175,7 @@ function requstTimetable(login_name, password, schoolName, date, callback) {
     //res.status(400).send("Invalid date")
     callback(400, null)
   } else if (school) {
-    getTimetable(loginName, password, school.link, date, (data, err) => {
+    getTimetable(loginName, password, school.link, date, "viken.no", (data, err) => {
       if (err == "ERROR") {
         //res.redirect(`/login?error=500`)
         callback(500, null)
@@ -180,8 +196,6 @@ function requstTimetable(login_name, password, schoolName, date, callback) {
 }
 
 app.post("/timetable", (req, res) => {
-  res.redirect("/login")
-  /*
   requstTimetable(req.body.login_name, req.body.password, req.body.school, req.body.date, (status, data) => {
     if (status === 200) {
       res.render("timetable", {
@@ -195,7 +209,6 @@ app.post("/timetable", (req, res) => {
       res.redirect(`/login?error=500`)
     }
   })
-  */
 })
 
 app.post("/timetableJSON", (req, res) => {
