@@ -90,7 +90,7 @@ window.onload = () => {
     //ret.style.backgroundColor = lesson.colour ? "#" + lesson.colour : "#FFF"
 
     let subjectHeading = document.createElement("h6")
-    let heading = lesson.type == "ACTIVITY" ? lesson.label : lesson.subject
+    let heading = lesson.type == "LESSON" ? lesson.subject : lesson.label
     subjectHeading.innerHTML = `<strong>${heading}</strong>`
     ret.appendChild(subjectHeading)
 
