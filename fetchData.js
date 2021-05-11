@@ -2,7 +2,8 @@ const puppeteer = require('puppeteer');
 
 async function getTimetable(login_name, password, schoolLink, date, organization, callback) {
   const browser = await puppeteer.launch({
-    headless: true // Set to false to watch the bot
+    headless: true, // Set to false to watch the bot
+    args: ['--no-sandbox'] // Need this to work on Heroku
   });
   const page = await browser.newPage();
 
