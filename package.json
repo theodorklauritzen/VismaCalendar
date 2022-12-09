@@ -17,9 +17,9 @@
   "author": "theodorklauritzen",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "dotenv": "^8.1.0",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "express-handlebars": "^5.3.1",
     "puppeteer": "^9.1.1"
   }
